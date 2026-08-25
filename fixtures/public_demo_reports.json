@@ -1,0 +1,230 @@
+{
+  "public-demo-001": {
+    "plan": {
+      "objective": "Produce a reproducible, evidence-aware editorial report for the wholly synthetic public demonstration.",
+      "steps": [
+        {
+          "id": "normalize_input",
+          "action": "Parse and normalize episode metadata, timestamped turns, and speaker labels.",
+          "purpose": "Create a stable input representation without changing the synthetic source wording.",
+          "depends_on": []
+        },
+        {
+          "id": "synthesize_editorial",
+          "action": "Draft the summary, five takeaways, exact quotes, and topic tags.",
+          "purpose": "Create useful editorial analysis grounded in the supplied transcript.",
+          "depends_on": [
+            "normalize_input"
+          ]
+        },
+        {
+          "id": "extract_claims",
+          "action": "Extract atomic factual statements and predictions with their source locations.",
+          "purpose": "Separate independently adjudicable claims and preserve provenance.",
+          "depends_on": [
+            "normalize_input"
+          ]
+        },
+        {
+          "id": "retrieve_evidence",
+          "action": "Retrieve primary-source evidence for externally checkable claims.",
+          "purpose": "Ground fact-checking in traceable documentation and expose evidence gaps.",
+          "depends_on": [
+            "extract_claims"
+          ]
+        },
+        {
+          "id": "adjudicate_claims",
+          "action": "Assign each claim a required verdict, confidence, explanation, and review flag.",
+          "purpose": "Distinguish verified facts, unsupported overstatement, and future prediction.",
+          "depends_on": [
+            "retrieve_evidence"
+          ]
+        },
+        {
+          "id": "assemble_report",
+          "action": "Assemble the editorial analysis, claim verdicts, evidence, and immutable source metadata.",
+          "purpose": "Create one typed report from both completed workflow branches.",
+          "depends_on": [
+            "synthesize_editorial",
+            "adjudicate_claims"
+          ]
+        },
+        {
+          "id": "validate_report",
+          "action": "Validate summary length, takeaways, exact quote provenance, topic syntax, plan integrity, and evidence policy.",
+          "purpose": "Reject structural or grounding failures before any result is written.",
+          "depends_on": [
+            "assemble_report"
+          ]
+        },
+        {
+          "id": "persist_artifacts",
+          "action": "Persist validated JSON, Markdown, JSON Schema, and a structured execution trace.",
+          "purpose": "Create reproducible machine-readable and reviewer-readable outputs.",
+          "depends_on": [
+            "validate_report"
+          ]
+        }
+      ]
+    },
+    "editorial": {
+      "summary": "Host Maya Chen interviews release engineer Rowan Ellis about a small, defensible release process that a reviewer can reproduce without privileged services. Rowan begins by defining reproducibility as the ability to start with the same source, configuration, runtime, and command and obtain the same class of artifact. The proposed workflow keeps configuration in version control, pins the runtime and dependencies, validates inputs before expensive work, and writes both machine-readable output and a concise human review.\n\nThe episode uses two concrete implementation examples. Rowan notes that Python's standard library reference includes the sqlite3 module, making it a useful option for a local demonstration, while cautioning that a demonstration architecture is not automatically the production architecture. Rowan also explains that a Docker image digest identifies specific image content, whereas a mutable tag can later point somewhere else. Together, those examples support repeatability without implying that containers solve every operational concern.\n\nMaya then challenges two software-supply-chain statements. Rowan first claims that generating an SBOM alone proves a release is secure, but later accepts that an inventory improves visibility and still needs vulnerability analysis, provenance controls, and remediation. The prediction that every engineering team will require SBOMs by next year is treated as a forecast rather than a present fact.\n\nThey close with operational discipline: redact secrets, retain structured stage and error logs, fail visibly instead of fabricating success, and require human review for high-risk claims. The result is a bounded checklist designed for reviewability, honest failure handling, and later extension.",
+      "notes": {
+        "takeaways": [
+          "Reproducibility depends on controlled source, configuration, runtime, dependencies, and a documented execution path.",
+          "A local demonstration should be easy to inspect, while its architectural limits remain explicit.",
+          "Immutable image digests provide more precise automation inputs than mutable human-friendly tags.",
+          "An SBOM improves component visibility but cannot by itself establish that a release is secure.",
+          "Trustworthy automation validates contracts, preserves safe traces, fails visibly, and retains human review for risky claims."
+        ],
+        "notable_quotes": [
+          {
+            "timestamp": "00:30",
+            "speaker": "Rowan Ellis",
+            "quote": "Reproducibility means a reviewer can start with the same source, configuration, runtime, and command and obtain the same class of artifact."
+          },
+          {
+            "timestamp": "02:00",
+            "speaker": "Rowan Ellis",
+            "quote": "A Docker image digest is a cryptographic identifier for specific image content."
+          },
+          {
+            "timestamp": "04:10",
+            "speaker": "Rowan Ellis",
+            "quote": "A trustworthy pipeline fails visibly instead of inventing success."
+          },
+          {
+            "timestamp": "05:05",
+            "speaker": "Rowan Ellis",
+            "quote": "Make the workflow bounded, preserve the evidence trail, and be explicit about where a local demonstration stops and a production design begins."
+          }
+        ],
+        "topics": [
+          "reproducible-releases",
+          "dependency-pinning",
+          "container-digests",
+          "software-supply-chain",
+          "sbom",
+          "observability",
+          "human-review"
+        ]
+      }
+    },
+    "claims": {
+      "claims": [
+        {
+          "claim": "Python's standard library reference includes the sqlite3 module.",
+          "source_excerpt": "Python's standard library reference includes the sqlite3 module.",
+          "timestamp": "01:20",
+          "speaker": "Rowan Ellis",
+          "claim_type": "externally_verifiable_fact",
+          "checkable": true,
+          "search_query": "site:docs.python.org/3/library sqlite3 standard library"
+        },
+        {
+          "claim": "A Docker image digest is a cryptographic identifier for specific image content.",
+          "source_excerpt": "A Docker image digest is a cryptographic identifier for specific image content.",
+          "timestamp": "02:00",
+          "speaker": "Rowan Ellis",
+          "claim_type": "externally_verifiable_fact",
+          "checkable": true,
+          "search_query": "site:docs.docker.com image digest cryptographic identifier content"
+        },
+        {
+          "claim": "Generating an SBOM by itself proves a release is secure.",
+          "source_excerpt": "Generating an SBOM by itself proves a release is secure.",
+          "timestamp": "02:50",
+          "speaker": "Rowan Ellis",
+          "claim_type": "externally_verifiable_fact",
+          "checkable": true,
+          "search_query": "site:cisa.gov SBOM inventory transparency vulnerability management"
+        },
+        {
+          "claim": "Every engineering team will require SBOMs by next year.",
+          "source_excerpt": "Every engineering team will require SBOMs by next year.",
+          "timestamp": "03:30",
+          "speaker": "Rowan Ellis",
+          "claim_type": "prediction",
+          "checkable": false,
+          "search_query": null
+        }
+      ]
+    },
+    "fact_checks": {
+      "fact_checks": [
+        {
+          "claim": "Python's standard library reference includes the sqlite3 module.",
+          "timestamp": "01:20",
+          "speaker": "Rowan Ellis",
+          "claim_type": "externally_verifiable_fact",
+          "verdict": "Verified true",
+          "confidence": 0.99,
+          "verification": "Python's official standard library index lists sqlite3 under Data Persistence and describes it as a DB-API 2.0 interface for SQLite databases.",
+          "evidence": [
+            {
+              "title": "The Python Standard Library",
+              "url": "https://docs.python.org/3/library/index.html",
+              "publisher": "Python Software Foundation",
+              "published_at": null,
+              "retrieved_at": "2026-08-21T00:00:00+00:00",
+              "evidence_note": "The official library index includes sqlite3 in the Data Persistence section."
+            }
+          ],
+          "needs_human_review": false
+        },
+        {
+          "claim": "A Docker image digest is a cryptographic identifier for specific image content.",
+          "timestamp": "02:00",
+          "speaker": "Rowan Ellis",
+          "claim_type": "externally_verifiable_fact",
+          "verdict": "Verified true",
+          "confidence": 0.99,
+          "verification": "Docker's official documentation defines an image digest as a unique SHA-256 cryptographic identifier that represents Docker image content.",
+          "evidence": [
+            {
+              "title": "Image digests",
+              "url": "https://docs.docker.com/dhi/explore/security-concepts/digests/",
+              "publisher": "Docker",
+              "published_at": null,
+              "retrieved_at": "2026-08-21T00:00:00+00:00",
+              "evidence_note": "Docker documents a digest as a unique cryptographic identifier representing image content."
+            }
+          ],
+          "needs_human_review": false
+        },
+        {
+          "claim": "Generating an SBOM by itself proves a release is secure.",
+          "timestamp": "02:50",
+          "speaker": "Rowan Ellis",
+          "claim_type": "externally_verifiable_fact",
+          "verdict": "Possibly outdated/inaccurate",
+          "confidence": 0.99,
+          "verification": "CISA and partner guidance describes an SBOM as a component inventory that enables visibility and correlation with vulnerability information. Those capabilities support risk management, but they do not by themselves prove that a release is secure, so the categorical claim is inaccurate.",
+          "evidence": [
+            {
+              "title": "A Shared Vision of Software Bill of Materials for Cybersecurity",
+              "url": "https://www.cisa.gov/sites/default/files/2025-09/joint-guidance-a-shared-vision-of-software-bill-of-materials-for-cybersecurity_508c.pdf",
+              "publisher": "CISA and partner agencies",
+              "published_at": null,
+              "retrieved_at": "2026-08-21T00:00:00+00:00",
+              "evidence_note": "The guidance defines an SBOM as a formal component record and explains how it supports visibility, vulnerability correlation, and risk-management practices rather than serving as proof of security."
+            }
+          ],
+          "needs_human_review": true
+        },
+        {
+          "claim": "Every engineering team will require SBOMs by next year.",
+          "timestamp": "03:30",
+          "speaker": "Rowan Ellis",
+          "claim_type": "prediction",
+          "verdict": "Unverifiable",
+          "confidence": 0.99,
+          "verification": "This is a universal forecast about future team policy, so no present evidence can establish its outcome as true or false. The verdict reflects non-verifiability, not a judgment that the prediction will fail.",
+          "evidence": [],
+          "needs_human_review": true
+        }
+      ]
+    }
+  }
+}

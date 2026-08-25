@@ -1,0 +1,82 @@
+{
+  "episode_id": "public-demo-001",
+  "title": "Ship It Safely: A Reproducible Release Checklist",
+  "host": "Maya Chen",
+  "guests": [
+    "Rowan Ellis"
+  ],
+  "transcript": [
+    {
+      "timestamp": "00:00",
+      "speaker": "Maya Chen",
+      "section": "Introduction",
+      "text": "Welcome to Build Notes. Today Rowan Ellis is joining us for a synthetic walkthrough of a release process that another engineer can reproduce and inspect."
+    },
+    {
+      "timestamp": "00:30",
+      "speaker": "Rowan Ellis",
+      "section": "Reproducibility",
+      "text": "Reproducibility means a reviewer can start with the same source, configuration, runtime, and command and obtain the same class of artifact. Keep configuration in version control, pin dependencies, and document one boring path through the system."
+    },
+    {
+      "timestamp": "01:05",
+      "speaker": "Maya Chen",
+      "section": "Local demo",
+      "text": "What is a reasonable persistence choice for a small local demonstration?"
+    },
+    {
+      "timestamp": "01:20",
+      "speaker": "Rowan Ellis",
+      "section": "Local demo",
+      "text": "Python's standard library reference includes the sqlite3 module. That can make a local demonstration easy to inspect, but the demonstration architecture is not automatically the production architecture."
+    },
+    {
+      "timestamp": "02:00",
+      "speaker": "Rowan Ellis",
+      "section": "Container identity",
+      "text": "A Docker image digest is a cryptographic identifier for specific image content. A mutable tag can be convenient for people, while the digest gives automation a precise identity to record."
+    },
+    {
+      "timestamp": "02:35",
+      "speaker": "Maya Chen",
+      "section": "Supply-chain claims",
+      "text": "Let me push on software supply-chain language. What can we responsibly conclude from generating an SBOM?"
+    },
+    {
+      "timestamp": "02:50",
+      "speaker": "Rowan Ellis",
+      "section": "Supply-chain claims",
+      "text": "Generating an SBOM by itself proves a release is secure."
+    },
+    {
+      "timestamp": "03:10",
+      "speaker": "Maya Chen",
+      "section": "Supply-chain claims",
+      "text": "That sounds stronger than an inventory can support. It may improve visibility, but teams still need vulnerability analysis, provenance controls, and remediation."
+    },
+    {
+      "timestamp": "03:30",
+      "speaker": "Rowan Ellis",
+      "section": "Forecast",
+      "text": "Every engineering team will require SBOMs by next year. That is my forecast, not a fact about the present."
+    },
+    {
+      "timestamp": "04:10",
+      "speaker": "Rowan Ellis",
+      "section": "Observability",
+      "text": "A trustworthy pipeline fails visibly instead of inventing success. Redact secrets, retain structured stage and error logs, and give a reviewer enough context to reproduce a failure."
+    },
+    {
+      "timestamp": "04:45",
+      "speaker": "Maya Chen",
+      "section": "Review policy",
+      "text": "So automation checks the contract, and a person still reviews high-risk or disputed claims before publication."
+    },
+    {
+      "timestamp": "05:05",
+      "speaker": "Rowan Ellis",
+      "section": "Conclusion",
+      "text": "Exactly. Make the workflow bounded, preserve the evidence trail, and be explicit about where a local demonstration stops and a production design begins."
+    }
+  ]
+}

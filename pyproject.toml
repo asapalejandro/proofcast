@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools==84.0.0", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proofcast"
+version = "0.1.0"
+description = "Evidence-first agentic podcast editorial pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Alejandro Palumbo" }]
+keywords = ["ai-agents", "fact-checking", "podcasts", "provenance"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+]
+dependencies = [
+  "pydantic==2.13.4",
+]
+
+[project.optional-dependencies]
+openai = ["openai==2.54.0"]
+
+[project.urls]
+Repository = "https://github.com/asapalejandro/proofcast"
+Issues = "https://github.com/asapalejandro/proofcast/issues"
+
+[project.scripts]
+proofcast = "proofcast.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

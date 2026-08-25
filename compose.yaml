@@ -1,0 +1,34 @@
+services:
+  proofcast:
+    build:
+      context: .
+    user: "${PROOFCAST_UID:-10001}:${PROOFCAST_GID:-10001}"
+    network_mode: none
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    volumes:
+      - type: bind
+        source: ./examples/public_demo_transcript.json
+        target: /inputs/public_demo_transcript.json
+        read_only: true
+      - type: bind
+        source: ./fixtures/public_demo_reports.json
+        target: /fixtures/public_demo_reports.json
+        read_only: true
+      - type: bind
+        source: ./outputs/public-demo
+        target: /outputs
+    command:
+      - run
+      - /inputs/public_demo_transcript.json
+      - --provider
+      - fixture
+      - --fixture
+      - /fixtures/public_demo_reports.json
+      - --output
+      - /outputs
