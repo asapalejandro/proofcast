@@ -11,3 +11,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Python minor-version jumps are runtime migrations, not routine image
+    # maintenance. Patch updates remain eligible for automated review.
+    ignore:
+      - dependency-name: python
+        update-types:
+          - version-update:semver-major
+          - version-update:semver-minor
