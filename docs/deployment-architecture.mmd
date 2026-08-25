@@ -1,0 +1,51 @@
+flowchart TB
+    Producer["Authenticated producer / reviewer"]
+    API["Protected ingestion and review API<br/>TLS · WAF · rate limits · OIDC/OAuth"]
+
+    subgraph Data["Encrypted data plane"]
+        State["Transcript objects · job metadata · checkpoints"]
+        Queue["Episode queue and backpressure"]
+    end
+
+    subgraph Compute["Private application network"]
+        Orchestrator["Durable workflow orchestrator<br/>bounded retries · checkpoints"]
+        Worker["Autoscaled ephemeral non-root worker<br/>normalize → plan → editorial → claims → evidence → validate"]
+    end
+
+    subgraph Approved["Approved services"]
+        Model["Model gateway<br/>approved model endpoint"]
+        Evidence["Evidence gateway<br/>allowlisted search / knowledge base"]
+    end
+
+    Result["Versioned JSON and Markdown results<br/>evidence metadata · validation · redacted trace"]
+    Review["Mandatory human review"]
+    CMS["CMS / export target"]
+    DLQ["Dead-letter queue<br/>safe diagnostics · audited replay"]
+
+    subgraph Operations["Governance and operations (cross-cutting)"]
+        Secrets["Secrets manager + KMS"]
+        Telemetry["Content-redacted logs, metrics, and traces"]
+        Alerts["SLO, quality, and cost alerts"]
+    end
+
+    Producer --> API
+    API --> State --> Queue
+    Queue --> Orchestrator --> Worker
+    Worker --> Model
+    Worker --> Evidence
+    Worker --> Result --> Review
+    Review -->|"explicit approval only"| CMS
+    Worker -. "terminal failure" .-> DLQ
+
+    classDef control fill:#eaf2ff,stroke:#315f9b,color:#102a43;
+    classDef store fill:#f5f7fa,stroke:#627d98,color:#102a43;
+    classDef human fill:#fff4d6,stroke:#b7791f,color:#513c06;
+    classDef external fill:#edf9f0,stroke:#2f855a,color:#173d2a;
+    classDef ops fill:#f4efff,stroke:#6b46a3,color:#35235a;
+    classDef failure fill:#fff0f0,stroke:#b64b4b,color:#5a2020;
+    class Producer,Review,CMS human;
+    class State,Queue,Result store;
+    class API,Orchestrator,Worker control;
+    class Model,Evidence external;
+    class Secrets,Telemetry,Alerts ops;
+    class DLQ failure;

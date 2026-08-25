@@ -6,6 +6,24 @@ ProofCast is an evidence-first podcast editorial workflow. It turns timestamped 
 
 All sample inputs and outputs in this repository are synthetic. No private or third-party transcripts are included.
 
+## Evaluator guide
+
+The assignment deliverables are surfaced directly below so each requirement can be reviewed without searching the repository.
+
+| Assignment requirement | Evidence in this repository |
+|---|---|
+| **1. Summarization** — approximately 200–300 words covering themes, discussions, and outcomes or opinions | Typed report models and deterministic validation in [`models.py`](src/proofcast/models.py) and [`validators.py`](src/proofcast/validators.py) |
+| **2. Key Notes Extraction** — top five takeaways, timestamped notable quotes, and topic tags | Structured generation plus quote-provenance and exact-count checks in [`orchestrator.py`](src/proofcast/orchestrator.py) and [`validators.py`](src/proofcast/validators.py) |
+| **3. Fact-Checking (Agentic Component)** — identify claims, retrieve or reason over evidence, and assign the required verdict | Bounded claim/evidence workflow in [`orchestrator.py`](src/proofcast/orchestrator.py) · live web-search adapter in [`openai.py`](src/proofcast/providers/openai.py) · deterministic evidence snapshot in [`fixture.py`](src/proofcast/providers/fixture.py) |
+| Source code, containerized and runnable locally via Docker | [`src/proofcast/`](src/proofcast/) · [`Dockerfile`](Dockerfile) · [`compose.yaml`](compose.yaml) · [credential-free quick start](#quick-start) |
+| Local or cloud model path | [Fixture and OpenAI providers](#providers); the fixture path is deterministic and credential-free, while the OpenAI path is live-capable and credential-gated |
+| Detailed README | Setup, provider, execution, output, security, and limitations are documented on this page |
+| Readable agent plans and execution logs | [Output contract](#output-contract) · generated content-redacted JSONL traces under `outputs/public-demo/traces/` |
+| Output JSON and Markdown with summary, notes, and fact checks | [Quick start](#quick-start) · generated `results.json` and per-episode JSON/Markdown under `outputs/public-demo/` |
+| **Detailed Deployment Strategy** | [Full production deployment narrative](docs/DEPLOYMENT.md) |
+| **Diagram** | [Rendered PNG](docs/deployment-architecture.png) · [accessible SVG](docs/deployment-architecture.svg) · [editable Mermaid source](docs/deployment-architecture.mmd) |
+| **Narrative description** | [Deployment, cost, scalability, fault tolerance, and other non-functional considerations](docs/DEPLOYMENT.md#narrative-description) |
+
 ## Quick start
 
 Docker Compose is the shortest credential-free path:
@@ -45,6 +63,8 @@ Pydantic and application validators enforce properties that prose generation alo
 - atomic claims with a verbatim source excerpt;
 - exact verdict labels and evidence required for affirmative or cautionary verdicts;
 - safe episode identifiers, evidence URLs, plan dependencies, and atomic writes.
+
+Fact-check verdicts preserve the brief's three labels exactly: `Verified true`, `Possibly outdated/inaccurate`, and `Unverifiable`.
 
 ## Providers
 
@@ -109,9 +129,17 @@ The fixture demo runs as a non-root user with a read-only container filesystem, 
 
 Live mode is a different trust boundary: it sends the full transcript to OpenAI for planning, editorial analysis, and claim extraction, then sends factual claims or search queries to hosted web search. Requests set `store=False`, but that does not replace an organization's data-classification, retention, residency, or provider-approval requirements. Do not submit confidential or regulated content without approval, and review every generated report before distribution. See [SECURITY.md](SECURITY.md) for vulnerability reporting.
 
-## Production direction
+## Detailed Deployment Strategy
 
-The provider protocol isolates planning, editorial generation, claim extraction, and verification from vendor SDKs. A production service would run the same immutable worker behind an asynchronous queue with tenant-scoped storage, idempotent checkpoints, bounded retries, a dead-letter path, evidence freshness policy, cost quotas, content-redacted telemetry, and mandatory human approval before export.
+> **Status:** The following is the required reference design and narrative, not infrastructure claimed to be deployed by this repository.
+
+![ProofCast reference production deployment architecture](docs/deployment-architecture.png)
+
+The complete [narrative description](docs/DEPLOYMENT.md) explains the request lifecycle and explicitly covers deployment, cost management, scalability and performance, fault tolerance and recovery, security and privacy, tenant isolation, observability, human review, and release operations. The diagram is also provided as an [accessible SVG](docs/deployment-architecture.svg) and editable [Mermaid source](docs/deployment-architecture.mmd).
+
+The provider protocol isolates planning, editorial generation, claim extraction, and verification from vendor SDKs. The reference production service runs the same immutable worker behind an asynchronous queue with tenant-scoped storage, idempotent checkpoints, bounded retries, a dead-letter path, evidence freshness policy, cost quotas, content-redacted telemetry, and mandatory human approval before export.
+
+### Current implementation boundary
 
 The implemented V1 has one live-capable adapter: OpenAI. It is contract-tested but requires a separately billed API key for live execution. A proposed V2 would add a capability-aware provider registry for tenant BYOK and approved client-managed endpoints such as Ollama. This is planned—not current support. Each provider would need conformance and quality evaluations, opaque secret references, and an explicit evidence path; a local model without approved retrieval could not produce an evidence-backed affirmative verdict.
 

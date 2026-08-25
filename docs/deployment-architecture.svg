@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1400" viewBox="0 0 1400 1400" role="img" aria-labelledby="title desc">
+  <title id="title">ProofCast reference production deployment architecture</title>
+  <desc id="desc">An authenticated producer submits a transcript through a protected API. Encrypted state and a queue feed a durable orchestrator and ephemeral worker. Approved model and evidence services support processing. Versioned results require human approval before export. A dead-letter queue, secrets, redacted telemetry, and alerts govern the workflow.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#edf4fb"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#17324d" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 z" fill="#315f9b"/>
+    </marker>
+    <marker id="arrow-muted" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L12,6 L0,12 z" fill="#75879a"/>
+    </marker>
+    <style>
+      .zone { fill:#ffffff; stroke:#b8c7d6; stroke-width:2; rx:18; }
+      .zone-title { font:700 17px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:1.4px; fill:#52677d; }
+      .zone-note { font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#52677d; }
+      .box { fill:#eaf2ff; stroke:#315f9b; stroke-width:2; rx:13; filter:url(#shadow); }
+      .store { fill:#f5f7fa; stroke:#627d98; }
+      .human { fill:#fff4d6; stroke:#b7791f; }
+      .external { fill:#edf9f0; stroke:#2f855a; }
+      .ops { fill:#f4efff; stroke:#6b46a3; }
+      .failure { fill:#fff0f0; stroke:#b64b4b; }
+      .title { font:750 36px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#17324d; }
+      .subtitle { font:500 20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#52677d; }
+      .box-title { font:700 20px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#17324d; text-anchor:middle; }
+      .box-copy { font:500 15px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#435b70; text-anchor:middle; }
+      .box-small { font:600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#435b70; text-anchor:middle; }
+      .flow { fill:none; stroke:#315f9b; stroke-width:3; marker-end:url(#arrow); }
+      .control { fill:none; stroke:#75879a; stroke-width:2.5; stroke-dasharray:8 7; marker-end:url(#arrow-muted); }
+      .flow-label { font:650 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#52677d; text-anchor:middle; paint-order:stroke; stroke:#f5f9fd; stroke-width:7px; stroke-linejoin:round; }
+      .pill { fill:#e8f3ff; stroke:#4582ba; stroke-width:1.5; rx:18; }
+      .pill-text { font:700 13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; letter-spacing:.8px; fill:#24577f; text-anchor:middle; }
+      .legend { font:600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; fill:#52677d; }
+      .divider { stroke:#a8b8c8; stroke-width:1.5; }
+    </style>
+  </defs>
+
+  <rect width="1400" height="1400" fill="url(#background)"/>
+  <text x="50" y="52" class="title">ProofCast reference production deployment</text>
+  <text x="50" y="83" class="subtitle">Asynchronous, tenant-aware, evidence-backed, and human-gated</text>
+  <rect x="1070" y="32" width="280" height="38" class="pill"/>
+  <text x="1210" y="57" class="pill-text">REFERENCE DESIGN · NOT DEPLOYED</text>
+
+  <!-- Primary request flow -->
+  <rect x="485" y="115" width="430" height="82" class="box human"/>
+  <text x="700" y="148" class="box-title">Authenticated producer / reviewer</text>
+  <text x="700" y="174" class="box-copy">upload · status · review</text>
+
+  <path d="M700 197 V241" class="flow"/>
+  <rect x="425" y="245" width="550" height="96" class="box"/>
+  <text x="700" y="280" class="box-title">Protected ingestion and review API</text>
+  <text x="700" y="307" class="box-copy">TLS · WAF · rate limits · OIDC/OAuth · tenant authorization</text>
+  <text x="700" y="330" class="box-small">schema and size validation · idempotent job creation</text>
+
+  <path d="M700 341 V392" class="flow"/>
+  <text x="805" y="373" class="flow-label">validated request</text>
+
+  <!-- Data plane -->
+  <rect x="270" y="396" width="860" height="174" class="zone"/>
+  <text x="294" y="426" class="zone-title">ENCRYPTED DATA PLANE</text>
+  <rect x="305" y="447" width="790" height="91" class="box store"/>
+  <line x1="568" y1="447" x2="568" y2="538" class="divider"/>
+  <line x1="831" y1="447" x2="831" y2="538" class="divider"/>
+  <text x="436" y="481" class="box-title">Transcript store</text>
+  <text x="436" y="508" class="box-copy">immutable objects</text>
+  <text x="699" y="481" class="box-title">Job state</text>
+  <text x="699" y="508" class="box-copy">metadata + checkpoints</text>
+  <text x="963" y="481" class="box-title">Episode queue</text>
+  <text x="963" y="508" class="box-copy">backpressure</text>
+
+  <path d="M700 570 V621" class="flow"/>
+  <text x="802" y="601" class="flow-label">asynchronous job</text>
+
+  <!-- Orchestration and worker -->
+  <rect x="395" y="625" width="610" height="287" class="zone"/>
+  <text x="419" y="655" class="zone-title">PRIVATE APPLICATION NETWORK</text>
+  <rect x="455" y="676" width="490" height="82" class="box"/>
+  <text x="700" y="709" class="box-title">Durable workflow orchestrator</text>
+  <text x="700" y="735" class="box-copy">bounded retries · timeouts · stage checkpoints · replay policy</text>
+  <path d="M700 758 V796" class="flow"/>
+  <text x="806" y="782" class="flow-label">checkpointed stages</text>
+  <rect x="455" y="800" width="490" height="87" class="box"/>
+  <text x="700" y="832" class="box-title">Autoscaled ephemeral worker</text>
+  <text x="700" y="858" class="box-copy">normalize → plan → editorial → claims → evidence → validate</text>
+  <text x="700" y="879" class="box-small">non-root · no public inbound access · bounded capabilities</text>
+
+  <!-- Failure handling -->
+  <rect x="45" y="650" width="300" height="168" class="zone"/>
+  <text x="69" y="680" class="zone-title">FAILURE HANDLING</text>
+  <rect x="78" y="708" width="234" height="78" class="box failure"/>
+  <text x="195" y="739" class="box-title">Dead-letter queue</text>
+  <text x="195" y="765" class="box-copy">safe diagnostics · audited replay</text>
+  <path d="M455 843 H365 V747 H312" class="control"/>
+  <text x="374" y="728" class="flow-label">terminal failure</text>
+
+  <!-- Approved provider boundary -->
+  <rect x="1055" y="625" width="300" height="287" class="zone"/>
+  <text x="1079" y="655" class="zone-title">APPROVED SERVICES</text>
+  <rect x="1085" y="685" width="240" height="83" class="box external"/>
+  <text x="1205" y="716" class="box-title">Model gateway</text>
+  <text x="1205" y="742" class="box-copy">approved model endpoint</text>
+  <rect x="1085" y="802" width="240" height="83" class="box external"/>
+  <text x="1205" y="833" class="box-title">Evidence gateway</text>
+  <text x="1205" y="859" class="box-copy">allowlisted search / KB</text>
+  <path d="M945 831 H1015 V726 H1085" class="flow"/>
+  <path d="M945 856 H1035 V843 H1085" class="flow"/>
+  <text x="1017" y="702" class="flow-label">policy-controlled</text>
+
+  <!-- Results and human approval -->
+  <path d="M700 912 V951" class="flow"/>
+  <text x="842" y="936" class="flow-label">typed report + evidence</text>
+  <rect x="455" y="955" width="490" height="84" class="box store"/>
+  <text x="700" y="987" class="box-title">Versioned JSON and Markdown results</text>
+  <text x="700" y="1013" class="box-copy">evidence metadata · validation outcome · redacted trace</text>
+  <path d="M700 1039 V1075" class="flow"/>
+  <rect x="455" y="1079" width="490" height="84" class="box human"/>
+  <text x="700" y="1111" class="box-title">Mandatory human review</text>
+  <text x="700" y="1137" class="box-copy">approve or request a new immutable draft version</text>
+  <path d="M700 1163 V1199" class="flow"/>
+  <text x="832" y="1186" class="flow-label">explicit approval only</text>
+  <rect x="500" y="1203" width="400" height="76" class="box human"/>
+  <text x="700" y="1234" class="box-title">CMS / export target</text>
+  <text x="700" y="1259" class="box-copy">least-privilege integration</text>
+
+  <!-- Cross-cutting operations -->
+  <rect x="45" y="950" width="300" height="329" class="zone"/>
+  <text x="69" y="980" class="zone-title">GOVERNANCE + OPERATIONS</text>
+  <text x="69" y="1001" class="zone-note">cross-cutting controls</text>
+  <rect x="78" y="1017" width="234" height="66" class="box ops"/>
+  <text x="195" y="1045" class="box-title">Secrets + KMS</text>
+  <text x="195" y="1068" class="box-copy">short-lived access</text>
+  <rect x="78" y="1101" width="234" height="66" class="box ops"/>
+  <text x="195" y="1129" class="box-title">Redacted telemetry</text>
+  <text x="195" y="1152" class="box-copy">logs · metrics · traces</text>
+  <rect x="78" y="1185" width="234" height="66" class="box ops"/>
+  <text x="195" y="1213" class="box-title">SLO + cost alerts</text>
+  <text x="195" y="1236" class="box-copy">quality · reliability · budgets</text>
+  <!-- Legend -->
+  <rect x="390" y="1332" width="17" height="17" class="box human"/>
+  <text x="417" y="1346" class="legend">human gate</text>
+  <rect x="525" y="1332" width="17" height="17" class="box"/>
+  <text x="552" y="1346" class="legend">controlled compute</text>
+  <rect x="725" y="1332" width="17" height="17" class="box store"/>
+  <text x="752" y="1346" class="legend">encrypted state</text>
+  <rect x="890" y="1332" width="17" height="17" class="box external"/>
+  <text x="917" y="1346" class="legend">approved service</text>
+  <line x1="1062" y1="1341" x2="1112" y2="1341" class="control"/>
+  <text x="1128" y="1346" class="legend">control / failure path</text>
+</svg>
