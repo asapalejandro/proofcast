@@ -1,12 +1,8 @@
 version: 2
 updates:
-  - package-ecosystem: pip
-    directory: /
-    schedule:
-      interval: weekly
-    groups:
-      python-runtime:
-        patterns: ["*"]
+  # Python dependencies are hash-locked across supported runtimes and are
+  # regenerated as a tested release unit. Repository-level Dependabot alerts
+  # and CI pip-audit checks remain enabled for vulnerability detection.
   - package-ecosystem: github-actions
     directory: /
     schedule:
